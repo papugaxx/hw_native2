@@ -5,29 +5,35 @@ import { BasicComponents } from "./src/ui/BasicComponents";
 import { Inputs } from "./src/ui/Inputs";
 import { MyKeyboard } from "./src/ui/MyKeybord";
 import { LayoutExample } from "./src/ui/LayoutExample";
+import { Buttons } from "./src/ui/Buttons";
+import { Feedback } from "./src/ui/Feedback";
+import { Lists } from "./src/ui/Lists";
+import CategoryScreen from "./src/screens/CategoryScreen";
+import HomeScreen from "./src/screens/HomeScreen";
 
 export default function App() {
   return (
-    <LayoutExample />
-    // <View style={styles.container}>
-    //   <ImageBackground
-    //     source={{ uri: "https://picsum.photos/800/600" }}
-    //     style={{ flex: 1, justifyContent: "center" }}
-    //   >
-    //     <Text style={styles.text}>
-    //       Ласкаво прошу до нашого додатку на React Native!
-    //     </Text>
-    //     <MyFlatList />
-    //     <StatusBar style="auto" />
-    //   </ImageBackground>
-    // </View>
+    // <LayoutExample />
+    <View style={styles.container}>
+      {/* <ImageBackground
+        source={{ uri: "https://picsum.photos/800/600" }}
+        style={{ flex: 1, justifyContent: "center" }}
+      >
+        <Text style={styles.text}>
+          Ласкаво прошу до нашого додатку на React Native!
+        </Text>
+        <MyFlatList />
+        <StatusBar style="auto" />
+      </ImageBackground> */}
+      <HomeScreen />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#7cf0b0",
+    backgroundColor: "#ffffff",
     justifyContent: "center", // центрує вміст по вертикалі
   },
   text: {

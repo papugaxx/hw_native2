@@ -1,0 +1,59 @@
+{
+  "categories": [
+    {
+      "id": "1",
+      "name": "Electronics",
+      "image": "https://images.unsplash.com/photo-1510557880182-3eecf17c0b9a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80%22",
+      "color": "blue"
+    },
+    {
+      "id": "2",
+      "name": "Clothing",
+      "image": "https://images.unsplash.com/photo-1522199755839-a2bac40b5f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80%22",
+      "color": "green"
+    },
+    {
+      "id": "3",
+      "name": "Books",
+      "image": "https://images.unsplash.com/photo-1544947950-f29da7ba23d8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80%22",
+      "color": "red"
+    },
+    {
+      "name": "Ссс",
+      "image": "Ссс",
+      "color": "Сссс",
+      "id": "ynigxnv_3k8"
+    },
+    {
+      "name": "Ссс",
+      "image": "Ссс",
+      "color": "Сссс",
+      "id": "-LiehrI20ag"
+    },
+    {
+      "name": "Ссс",
+      "image": "Ссс",
+      "color": "Сссс",
+      "id": "uET7YEdlCl8"
+    },
+    {
+      "name": "Ссс",
+      "image": "Ссс",
+      "color": "Сссс",
+      "id": "TRfq-2raQMY"
+    },
+    {
+      "name": "Ссс",
+      "image": "Ссс",
+      "color": "Сссс",
+      "id": "Q0_YgpfHvYQ"
+    },
+    {
+      "name": "Hbbb",
+      "image": "Bb",
+      "color": "Pooh",
+      "id": "j9tF1z6xGA4"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
