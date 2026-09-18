@@ -37,7 +37,17 @@ interface Product {
 
 type SortOption = "none" | "priceAsc" | "priceDesc" | "nameAsc" | "nameDesc";
 
-export default function HomeScreen() {
+interface HomeScreenProps {
+  onOpenFavorites: () => void;
+  onOpenCart: () => void;
+}
+
+interface FavoriteRecord {
+  id: string;
+  productId: string;
+}
+
+export default function HomeScreen({ onOpenFavorites, onOpenCart }: HomeScreenProps) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
@@ -59,20 +69,25 @@ export default function HomeScreen() {
       setLoading(true);
       setError(null);
 
-      const [categoriesRes, productsRes] = await Promise.all([
+      const [categoriesRes, productsRes, favoritesRes] = await Promise.all([
         fetch(`${API_BASE_URL}/categories`),
         fetch(`${API_BASE_URL}/products`),
+        fetch(`${API_BASE_URL}/favorites`),
       ]);
 
-      if (!categoriesRes.ok || !productsRes.ok) {
+      if (!categoriesRes.ok || !productsRes.ok || !favoritesRes.ok) {
         throw new Error("Не вдалося завантажити дані");
       }
 
       const categoriesData = await categoriesRes.json();
       const productsData = await productsRes.json();
+      const favoritesData: FavoriteRecord[] = await favoritesRes.json();
 
       setCategories(categoriesData);
       setProducts(productsData);
+      setFavoriteProducts(
+        new Set(favoritesData.map((favorite) => String(favorite.productId))),
+      );
     } catch (err: any) {
       console.error(err);
       setError("Помилка підключення до сервера");
@@ -81,21 +96,57 @@ export default function HomeScreen() {
     }
   };
 
-  const toggleFavorite = (productId: string) => {
-  setFavoriteProducts((currentFavorites) => {
-    const nextFavorites = new Set(currentFavorites);
+  const toggleFavorite = async (productId: string) => {
+  try {
+    const isFavorite = favoriteProducts.has(productId);
 
-    if (nextFavorites.has(productId)) {
-      nextFavorites.delete(productId);
+    if (isFavorite) {
+      const response = await fetch(
+        `${API_BASE_URL}/favorites?productId=${productId}`,
+      );
+
+      const favorites = await response.json();
+
+      if (favorites.length > 0) {
+        await fetch(
+          `${API_BASE_URL}/favorites/${favorites[0].id}`,
+          {
+            method: "DELETE",
+          },
+        );
+      }
+
+      setFavoriteProducts((currentFavorites) => {
+        const newFavorites = new Set(currentFavorites);
+
+        newFavorites.delete(productId);
+
+        return newFavorites;
+      });
     } else {
-      nextFavorites.add(productId);
-    }
+      await fetch(`${API_BASE_URL}/favorites`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          productId: productId,
+        }),
+      });
 
-    return nextFavorites;
-  });
+      setFavoriteProducts((currentFavorites) => {
+        const newFavorites = new Set(currentFavorites);
+
+        newFavorites.add(productId);
+
+        return newFavorites;
+      });
+    }
+  } catch (error) {
+    console.log("Помилка обраного:", error);
+  }
 };
 
-  // Фільтрація товарів: за категорією ТА за пошуковим запитом
   const filteredProducts = useMemo(() => {
   const filtered = products.filter((product) => {
     const matchesCategory = selectedCategoryId
@@ -180,7 +231,6 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.container}
       >
-        {/* Шапка */}
         <View style={styles.header}>
           <View>
             <Text style={[styles.greetingTitle, { color: theme.textPrimary }]}>
@@ -208,7 +258,45 @@ export default function HomeScreen() {
             </View>
             <TouchableOpacity
               style={[
-                styles.notificationButton,
+                styles.headerIconButton,
+                { backgroundColor: theme.inputBg },
+              ]}
+              onPress={onOpenFavorites}
+              activeOpacity={0.7}
+            >
+              <Ionicons
+                name={favoriteProducts.size > 0 ? "heart" : "heart-outline"}
+                size={22}
+                color={favoriteProducts.size > 0 ? "#E53935" : theme.textPrimary}
+              />
+              {favoriteProducts.size > 0 && (
+                <View style={styles.favoriteBadge}>
+                  <Text style={styles.badgeText}>{favoriteProducts.size}</Text>
+                </View>
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.headerIconButton,
+                { backgroundColor: theme.inputBg },
+              ]}
+              onPress={onOpenCart}
+              activeOpacity={0.7}
+            >
+              <Ionicons
+                name="cart-outline"
+                size={22}
+                color={theme.textPrimary}
+              />
+              <View style={styles.cartBadge}>
+                <Text style={styles.badgeText}>3</Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.headerIconButton,
                 { backgroundColor: theme.inputBg },
               ]}
             >
@@ -224,7 +312,6 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* Пошук */}
         <View
           style={[styles.searchContainer, { backgroundColor: theme.inputBg }]}
         >
@@ -248,7 +335,6 @@ export default function HomeScreen() {
           )}
         </View>
 
-        {/* Промо-банер */}
         <View style={[styles.banner, { backgroundColor: theme.bannerBg }]}>
           <View style={styles.bannerContent}>
             <View style={styles.discountTag}>
@@ -276,7 +362,6 @@ export default function HomeScreen() {
           />
         </View>
 
-        {/* Секція: Категорії */}
         <View style={styles.sectionHeader}>
           <Text style={[styles.sectionTitle, { color: theme.textPrimary }]}>
             Категорії
@@ -293,7 +378,6 @@ export default function HomeScreen() {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.categoriesList}
         >
-          {/* Кнопка "Всі" */}
           <TouchableOpacity
             style={styles.categoryCard}
             onPress={() => setSelectedCategoryId(null)}
@@ -331,7 +415,6 @@ export default function HomeScreen() {
             </Text>
           </TouchableOpacity>
 
-          {/* Список категорій */}
           {categories.map((item) => {
             const isSelected = String(selectedCategoryId) === String(item.id);
             return (
@@ -375,7 +458,6 @@ export default function HomeScreen() {
           })}
         </ScrollView>
 
-        {/* Секція: Товари */}
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -597,7 +679,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 4,
   },
-  notificationButton: {
+  headerIconButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
@@ -612,6 +694,30 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: 16,
     height: 16,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  favoriteBadge: {
+    position: "absolute",
+    top: 2,
+    right: 2,
+    backgroundColor: "#2E7D32",
+    borderRadius: 10,
+    minWidth: 16,
+    height: 16,
+    paddingHorizontal: 4,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cartBadge: {
+    position: "absolute",
+    top: 2,
+    right: 2,
+    backgroundColor: "#2E7D32",
+    borderRadius: 10,
+    minWidth: 16,
+    height: 16,
+    paddingHorizontal: 4,
     justifyContent: "center",
     alignItems: "center",
   },

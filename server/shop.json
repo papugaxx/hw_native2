@@ -217,7 +217,16 @@
       "reviews": 49,
       "image": "https://cdn-icons-png.flaticon.com/512/2935/2935307.png"
     }
-  ]
+  ],
+  "favorites": [
+    {
+      "id": "dqIO1zgb5cI",
+      "productId": "p6"
+    },
+    {
+      "id": "f4cV1gfbnNM",
+      "productId": "p4"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }
- 
- 
