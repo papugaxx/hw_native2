@@ -1,28 +1,28 @@
-import React, { useState } from "react";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import HomeScreen from "./src/screens/HomeScreen";
-import FavoritesScreen from "./src/screens/FavoritesScreen";
-import CartScreen from "./src/screens/CartScreen";
-
-type Screen = "home" | "favorites" | "cart";
+import React from "react";
+import { View, StyleSheet } from "react-native";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import ProductForm from "./src/components/ProductForm";
+import ProductList from "./src/components/ProductList";
 
 export default function App() {
-  const [screen, setScreen] = useState<Screen>("home");
-
   return (
     <SafeAreaProvider>
-      {screen === "home" && (
-        <HomeScreen
-          onOpenFavorites={() => setScreen("favorites")}
-          onOpenCart={() => setScreen("cart")}
-        />
-      )}
-
-      {screen === "favorites" && (
-        <FavoritesScreen onBack={() => setScreen("home")} />
-      )}
-
-      {screen === "cart" && <CartScreen onBack={() => setScreen("home")} />}
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.container}>
+          <ProductForm />
+          <ProductList />
+        </View>
+      </SafeAreaView>
     </SafeAreaProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
+  container: {
+    flex: 1,
+    padding: 20,
+  },
+});

@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   StatusBar,
   Switch,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -624,6 +625,17 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
     paddingBottom: 32,
+    // backgroundColor:
+    //   Platform.OS === "web"
+    //     ? "yellow"
+    //     : Platform.OS === "ios"
+    //       ? "gray"
+    //       : "green",
+    backgroundColor: Platform.select({
+      ios: "gray",
+      android: "green",
+      default: "yellow", 
+    }),
   },
   centerContainer: {
     flex: 1,
